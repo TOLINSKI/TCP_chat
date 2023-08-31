@@ -1,0 +1,22 @@
+Exercise explanation:
+this project assumes prior knowledge in the of the following subjects:
+objects oriented programing
+type safe programing language
+SOLID
+use of git
+use of jira or similar
+UML diagram and software design
+
+you would create a tcp based chat communicating between two services. the code base should be one and you can chose to open a communication port or connect to another port, choice would be made in console or config file. the project ui would be a console application.
+
+pre-coding steps (should be approved before going to next steps):
+create a UML class diagram and sequence diagram for the project
+open a project on github and create main branch and develop branch
+open jira tickets, each tickets represents a task of up to 4 hours
+
+coding:
+while working on the project chose wisely the order of tickets you do
+every task should have a working branch on git and a pull request should be opened for each task
+please make note of any design changes discovered through out the project
+
+
