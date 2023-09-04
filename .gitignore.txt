@@ -1,1 +1,2 @@
-TCP_chat/TCP_chat/.vs/
+C:\Users\bentu\Python_projects\TCP_chat\TCP_chat\TCP_chat\.vs\
+
