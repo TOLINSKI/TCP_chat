@@ -1,6 +1,6 @@
-from abc import ABC, abstractclassmethod
+from abc import ABC, abstractmethod
 
 class UI(ABC):
-    @abstractclassmethod
+    @abstractmethod
     def startUI():
         pass
