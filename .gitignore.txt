@@ -1,2 +1,3 @@
-C:\Users\bentu\Python_projects\TCP_chat\TCP_chat\TCP_chat\.vs\
+TCP_chat\.vs\
 
+TCP_chat\TCP_chat.sln
