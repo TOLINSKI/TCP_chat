@@ -1,2 +1,2 @@
-.idea/
-Code/__pycache__/
+/.idea/
+/Code/__pycache__/
