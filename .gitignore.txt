@@ -1,2 +1,0 @@
-/.idea/
-/Code/__pycache__/
