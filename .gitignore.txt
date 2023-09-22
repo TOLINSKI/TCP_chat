@@ -1,3 +1,2 @@
-TCP_chat\.vs\
-
-TCP_chat\TCP_chat.sln
+.idea
+__pycache__
