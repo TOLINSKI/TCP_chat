@@ -7,20 +7,16 @@ from Client import Client
 class ChatFacade:
 
     def __init__(self):
-        self.userChoice = 0
-        self.server = None
-        self.client = None
-        self.menu = ConsoleMenu()
+        # self.userChoice = 0
+        self.devices = {1: Server, 2: Client}
+        self.device = None
+        self.menu = None
 
     def startChat(self):
+        self.menu = ConsoleMenu()
         self.menu.startUI()
-        self.menu.validateChoice()
-        self.userChoice = self.menu.getChoice()
-        if self.userChoice == 1:
-            self.server = Server()
-            self.server.start()
-            self.server.receive()
-        elif self.userChoice == 2:
-            self.client = Client()
-            self.client.start()
+        userChoice = self.menu.getChoice()
+        self.device = self.devices[userChoice]()
+        self.device.start()
         self.menu.printChoice()
+

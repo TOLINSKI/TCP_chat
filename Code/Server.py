@@ -18,6 +18,7 @@ class Server(IODevice):
     def start(self):
         self.connect()
         self.server.listen()
+        self.receive()
 
     def broadcast(self, message):
         for nickname, client in self.clients.items():

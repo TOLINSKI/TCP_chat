@@ -19,16 +19,15 @@ class ConsoleMenu(UI):
             goodInput = True
             self.userChoice = int(userInput)
 
-
     def printChoice(self):
         print(f"You have chosen: {self.userChoice}")
-
 
     def startUI(self):
         print("Hello")
         print("1. Start a new chat")
         print("2. Connect to existing chat")
         print("3. Exit")
+        self.validateChoice()
 
     def getChoice(self):
         return self.userChoice
