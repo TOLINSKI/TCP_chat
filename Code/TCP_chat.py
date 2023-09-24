@@ -1,8 +1,8 @@
 from chatFacade import ChatFacade
 
 def main():
-    print("Hello")
     chat = ChatFacade()
+    chat.startChat()
 
 if __name__ == "__main__":
     main()

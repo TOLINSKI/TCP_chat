@@ -3,18 +3,24 @@ from ConsoleMenu import ConsoleMenu
 from Server import Server
 from Client import Client
 
+
 class ChatFacade:
-    
+
     def __init__(self):
-        menu = ConsoleMenu()
-        menu.startUI()
-        menu.validateChoice()
-        self.userChoice = menu.getChoice()
+        self.userChoice = 0
+        self.server = None
+        self.client = None
+        self.menu = ConsoleMenu()
+
+    def startChat(self):
+        self.menu.startUI()
+        self.menu.validateChoice()
+        self.userChoice = self.menu.getChoice()
         if self.userChoice == 1:
             self.server = Server()
+            self.server.start()
             self.server.receive()
         elif self.userChoice == 2:
             self.client = Client()
-        print(f"You have chosen: {self.userChoice}")
-    
-    
+            self.client.start()
+        self.menu.printChoice()

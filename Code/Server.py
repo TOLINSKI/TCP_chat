@@ -1,24 +1,33 @@
 import threading
-from TCPStarter import TCPStarter
+from IODevice import IODevice
 import socket
 import CommConsts
 
-class Server(TCPStarter):
-    
+
+class Server(IODevice):
+
     def __init__(self):
         super().__init__()
-        super().start()
         self.clients = {}
+        self.server = None
+
+    def connect(self):
+        self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.server.bind(CommConsts.ADDR)
+
+    def start(self):
+        self.connect()
+        self.server.listen()
 
     def broadcast(self, message):
         for nickname, client in self.clients.items():
             client.send(message.encode(CommConsts.FORMAT))
-    
+
     def handle(self, client, nickname):
         while True:
             try:
                 message = client.recv(CommConsts.SIZE).decode(CommConsts.FORMAT)
-                if(message == "/Exit"):
+                if (message == "/Exit"):
                     self.clients[nickname].send("/Exit")
                 else:
                     self.broadcast(message)
@@ -30,14 +39,14 @@ class Server(TCPStarter):
                     print(n)
                 client.close()
                 break
-                
+
     def startClientThread(self, client, nickname):
         thread = threading.Thread(target=self.handle, args=(client, nickname,))
-        thread.start() 
-    
+        thread.start()
+
     def receive(self):
         print("Server is listening...")
-   
+
         while True:
             client, address = self.server.accept()
             print(f"Connected with IP: {address}")
@@ -48,7 +57,3 @@ class Server(TCPStarter):
             self.broadcast(f"{nickname} has joined the chat!")
             client.send("Connected successfully!".encode(CommConsts.FORMAT))
             self.startClientThread(client, nickname)
-            
-            
-            
-    
