@@ -1,20 +1,21 @@
 from configparser import ConfigParser
 import socket
 
-config_obj = ConfigParser()
+config = ConfigParser()
 
-config_obj["MESSAGEINFO"] = {
+config["MESSAGE"] = {
     "size": 1024,
     "format": 'utf-8',
+    "exit": '/Exit',
 }
 
-config_obj["SERVERCONFIG"] = {
+config["SERVER"] = {
     "port": 5050,
     "server": socket.gethostbyname(socket.gethostname()),
 }
 
-with open('config.ini', 'w') as config:
-    config_obj.write(config)
+with open('config.ini', 'w') as configFile:
+    config.write(configFile)
 
 
 

@@ -1,7 +1,8 @@
 import threading
 from IODevice import IODevice
 import socket
-import CommConsts
+from configparser import ConfigParser
+from ipaddress import ip_address
 
 
 class Server(IODevice):
@@ -10,24 +11,35 @@ class Server(IODevice):
         super().__init__()
         self.clients = {}
         self.server = None
+        self.serverConfig = None
+        self.messageConfig = None
+        self.config = ConfigParser()
 
     def connect(self):
         self.server = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server.bind(CommConsts.ADDR)
+        address = (self.serverConfig['server'], int(self.serverConfig['port']))
+        self.server.bind(address)
 
     def start(self):
+        self.config.read("config.ini")
+        try:
+            self.serverConfig = self.config["SERVER"]
+            self.messageConfig = self.config["MESSAGE"]
+        except:
+            print("Error in Config file")
+            exit(0)
         self.connect()
         self.server.listen()
         self.receive()
 
     def broadcast(self, message):
         for nickname, client in self.clients.items():
-            client.send(message.encode(CommConsts.FORMAT))
+            client.send(message.encode(self.messageConfig['format']))
 
     def handle(self, client, nickname):
         while True:
             try:
-                message = client.recv(CommConsts.SIZE).decode(CommConsts.FORMAT)
+                message = client.recv(int(self.messageConfig['size'])).decode(self.messageConfig['format'])
                 if (message == "/Exit"):
                     self.clients[nickname].send("/Exit")
                 else:
@@ -51,10 +63,10 @@ class Server(IODevice):
         while True:
             client, address = self.server.accept()
             print(f"Connected with IP: {address}")
-            client.send("NICK".encode(CommConsts.FORMAT))
-            nickname = client.recv(CommConsts.SIZE).decode(CommConsts.FORMAT)
+            client.send("NICK".encode(self.messageConfig['format']))
+            nickname = client.recv(int(self.messageConfig['size'])).decode(self.messageConfig['format'])
             print(f"The client's nickname is: {nickname}'")
             self.clients[nickname] = client
             self.broadcast(f"{nickname} has joined the chat!")
-            client.send("Connected successfully!".encode(CommConsts.FORMAT))
+            client.send("Connected successfully!".encode(self.messageConfig['format']))
             self.startClientThread(client, nickname)

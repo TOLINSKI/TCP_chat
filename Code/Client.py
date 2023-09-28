@@ -1,7 +1,6 @@
 import threading
 import socket
-import CommConsts
-
+from configparser import ConfigParser
 from IODevice import IODevice
 
 
@@ -13,11 +12,26 @@ class Client(IODevice):
         self.exitEvent = None
         self.nickname = None
 
+        self.writeThread = None
+        self.receiveThread = None
+
+        self.messageConfig = None
+        self.serverConfig = None
+        self.config = ConfigParser()
+
     def connect(self):
         self.client = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.client.connect((CommConsts.SERVER, CommConsts.PORT))
+        address = (self.serverConfig['server'], int(self.serverConfig['port']))
+        self.client.connect(address)
     
     def start(self):
+        self.config.read("config.ini")
+        try:
+            self.serverConfig = self.config["SERVER"]
+            self.messageConfig = self.config["MESSAGE"]
+        except:
+            print("Error in Config file")
+            exit(0)
         self.connect()
         print(f"Client initiated with IP:{self.client.getpeername()}")
         self.nickname = input("Enter your nickname:\n")
@@ -31,12 +45,12 @@ class Client(IODevice):
             try:
                 userInput = input()
                 if userInput == '/Exit':
-                    self.client.send(userInput.encode(CommConsts.FORMAT))
+                    self.client.send(userInput.encode(self.messageConfig['format']))
                     print(f"Goodbye {self.nickname}")
                     self.exitEvent.set()
                     break
                 message = f"{self.nickname}: {userInput}"
-                self.client.send(message.encode(CommConsts.FORMAT))
+                self.client.send(message.encode(self.messageConfig['format']))
             except:
                 print("An error occured!")
                 break
@@ -45,10 +59,10 @@ class Client(IODevice):
         print("Receive thread started")
         while not self.exitEvent.is_set():
             try:
-                message = self.client.recv(CommConsts.SIZE).decode(CommConsts.FORMAT)
-                if (message == 'NICK'):
-                    self.client.send(self.nickname.encode(CommConsts.FORMAT))
-                elif (message == '/Exit'):
+                message = self.client.recv(int(self.messageConfig['size'])).decode(self.messageConfig['format'])
+                if message == 'NICK':
+                    self.client.send(self.nickname.encode(self.messageConfig['format']))
+                elif message == '/Exit':
                     break
                 else:
                     print(message)
