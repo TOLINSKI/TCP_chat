@@ -1,6 +1,18 @@
 from UI import UI
 
 
+def printListen():
+    print("Server is listening")
+
+
+def printClientInfo(address, nickname):
+    print(f"Connected with {nickname} at IP: {address}")
+
+
+def printClientConnected(ip):
+    print(f"Connected with IP:{ip}")
+
+
 class ConsoleMenu(UI):
 
     def __init__(self):
@@ -28,6 +40,8 @@ class ConsoleMenu(UI):
         print("2. Connect to existing chat")
         print("3. Exit")
         self.validateChoice()
+
+    """ Getters & Setters """
 
     def getChoice(self):
         return self.userChoice

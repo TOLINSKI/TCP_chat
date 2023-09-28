@@ -10,13 +10,13 @@ class ChatFacade:
         # self.userChoice = 0
         self.devices = {1: Server, 2: Client}
         self.device = None
-        self.menu = None
+        self.ui = None
 
     def startChat(self):
-        self.menu = ConsoleMenu()
-        self.menu.startUI()
-        userChoice = self.menu.getChoice()
+        self.ui = ConsoleMenu()
+        self.ui.startUI()
+        userChoice = self.ui.getChoice()
         self.device = self.devices[userChoice]()
         self.device.start()
-        self.menu.printChoice()
+        self.ui.printChoice()
 

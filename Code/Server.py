@@ -2,7 +2,7 @@ import threading
 from IODevice import IODevice
 import socket
 from configparser import ConfigParser
-from ipaddress import ip_address
+import ConsoleMenu as ui
 
 
 class Server(IODevice):
@@ -11,8 +11,11 @@ class Server(IODevice):
         super().__init__()
         self.clients = {}
         self.server = None
+
         self.serverConfig = None
         self.messageConfig = None
+        self.operationConfig = None
+        self.notificationsConfig = None
         self.config = ConfigParser()
 
     def connect(self):
@@ -21,16 +24,21 @@ class Server(IODevice):
         self.server.bind(address)
 
     def start(self):
+        self.readConfig()
+        self.connect()
+        self.server.listen()
+        self.receive()
+
+    def readConfig(self):
         self.config.read("config.ini")
         try:
             self.serverConfig = self.config["SERVER"]
             self.messageConfig = self.config["MESSAGE"]
+            self.operationConfig = self.config["OPERATION"]
+            self.notificationsConfig = self.config["NOTIFICATIONS"]
         except:
-            print("Error in Config file")
+            print("Error in Server.readConfig")
             exit(0)
-        self.connect()
-        self.server.listen()
-        self.receive()
 
     def broadcast(self, message):
         for nickname, client in self.clients.items():
@@ -40,12 +48,12 @@ class Server(IODevice):
         while True:
             try:
                 message = client.recv(int(self.messageConfig['size'])).decode(self.messageConfig['format'])
-                if (message == "/Exit"):
-                    self.clients[nickname].send("/Exit")
+                if message == self.operationConfig['exit']:
+                    self.clients[nickname].send(self.operationConfig['exit'])
                 else:
                     self.broadcast(message)
             except:
-                self.broadcast(f"{nickname} left the chat!")
+                self.broadcast(nickname + " " + self.notificationsConfig['left'])
                 self.clients.pop(nickname)
                 print("clients left:")
                 for n, c in self.clients.items():
@@ -58,15 +66,14 @@ class Server(IODevice):
         thread.start()
 
     def receive(self):
-        print("Server is listening...")
+        ui.printListen()
 
         while True:
             client, address = self.server.accept()
-            print(f"Connected with IP: {address}")
-            client.send("NICK".encode(self.messageConfig['format']))
+            client.send(self.operationConfig['chooseNickname'].encode(self.messageConfig['format']))
             nickname = client.recv(int(self.messageConfig['size'])).decode(self.messageConfig['format'])
-            print(f"The client's nickname is: {nickname}'")
+            ui.printClientInfo(address, nickname)
             self.clients[nickname] = client
-            self.broadcast(f"{nickname} has joined the chat!")
-            client.send("Connected successfully!".encode(self.messageConfig['format']))
+            self.broadcast(nickname + " " + self.notificationsConfig['joined'])
+            client.send(self.notificationsConfig['connected'].encode(self.messageConfig['format']))
             self.startClientThread(client, nickname)

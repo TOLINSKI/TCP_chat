@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 
+
 class UI(ABC):
     @abstractmethod
-    def startUI():
+    def startUI(self):
         pass
