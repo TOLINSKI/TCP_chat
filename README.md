@@ -1,6 +1,6 @@
 # TCP_chat
 A baisc tcp based chat communicating between two services.
-# This project's purpose is self-learning correct OOP programming, and getting familiar in working with UML diagrams, Jira, Git
+# This project's purpose is learning correct OOP programming, and getting familiar in working with UML diagrams, Jira, Git
 
 ---------------------------------------------
             General Information
